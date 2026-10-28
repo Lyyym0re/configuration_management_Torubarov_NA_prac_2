@@ -1,0 +1,10 @@
+analyze --package A --version 1.0.0 --repository https://api.nuget.org/v3/index.json
+analyze --package A --version 1.0.0 --repository demo/repository.json --test-mode --ascii
+analyze --version 1.0.0 --repository https://api.nuget.org/v3/index.json
+analyze --package "bad name" --version 1.0.0 --repository demo/repository.json --test-mode
+analyze --package A --version wrong --repository demo/repository.json --test-mode
+analyze --package A --version 1.0.0 --repository invalid
+analyze --package A --version 1.0.0 --repository missing.json --test-mode
+analyze --package A --version 1.0.0 --repository demo/repository.json --test-mode yes
+analyze --package A --version 1.0.0 --repository demo/repository.json --test-mode --output x.jpg
+analyze --package A --version 1.0.0 --repository demo/repository.json --test-mode --ascii yes
