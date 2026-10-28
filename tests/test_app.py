@@ -11,6 +11,7 @@ from src.cli import command
 from src.nuget import NuGet
 from src.versions import choose
 from src.graph import build, read_test
+from src.graph import reverse
 
 ROOT = Path(__file__).resolve().parents[1]
 OPTIONS = ["--package", "A", "--version", "1.0.0", "--test-mode",
@@ -67,6 +68,13 @@ class AppTests(unittest.TestCase):
             with self.subTest(name=name):
                 self.assertEqual(len(build((name, "1.0.0"), data.__getitem__)),
                                  count)
+
+    def test_reverse(self):
+        """Найти прямых и транзитивных предков, сохранив защиту от циклов."""
+        data = read_test(ROOT / "demo/repository.json")
+        graph = reverse(data, ("D", "1.0.0"))
+        self.assertEqual([node[0] for node in graph], ["D", "B", "C", "A"])
+        self.assertEqual(len(reverse(data, ("E", "1.0.0"))), 2)
 
 
 if __name__ == "__main__":

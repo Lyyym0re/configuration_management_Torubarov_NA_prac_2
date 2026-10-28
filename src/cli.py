@@ -9,6 +9,7 @@ from xml.etree.ElementTree import ParseError
 from src.config import Parser, parse
 from src.nuget import NuGet
 from src.graph import build, read_test, show
+from src.graph import reverse, show_reverse
 
 ERRORS = (ValueError, OSError, KeyError, TypeError, ParseError,
           subprocess.SubprocessError, RecursionError)
@@ -29,8 +30,18 @@ def source(args):
 def run(arguments):
     """Выполнить основной сценарий текущего этапа."""
     args = parse(arguments)
-    root, children, _ = source(args)
-    show(build(root, children))
+    if args.reverse and not args.test_mode and not args.root:
+        raise ValueError("Для NuGet укажите --root ПАКЕТ ВЕРСИЯ")
+    root, children, full = source(args)
+    if args.reverse:
+        if args.root:
+            name, version = args.root
+            scope = (name if args.test_mode else name.lower(), version)
+            full = build(scope, children)
+        graph = reverse(full, root)
+        show_reverse(graph, root)
+    else:
+        show(build(root, children))
 
 
 def checked(arguments):
