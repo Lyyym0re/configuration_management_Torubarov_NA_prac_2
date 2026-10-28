@@ -1,3 +1,5 @@
-analyze --package Newtonsoft.Json --version 13.0.3 --repository https://api.nuget.org/v3/index.json
-analyze --package Newtonsoft.Json --version 6.0.8 --repository https://api.nuget.org/v3/index.json
-analyze --package Newtonsoft.Json --version 9999.0.0 --repository https://api.nuget.org/v3/index.json
+analyze --package A --version 1.0.0 --repository demo/repository.json --test-mode
+analyze --package E --version 1.0.0 --repository demo/repository.json --test-mode
+analyze --package G --version 1.0.0 --repository demo/repository.json --test-mode
+analyze --package Z --version 1.0.0 --repository demo/repository.json --test-mode
+analyze --package X --version 1.0.0 --repository demo/repository.json --test-mode

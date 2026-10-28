@@ -7,7 +7,7 @@ from urllib.request import urlopen
 from xml.etree import ElementTree as ET
 
 from src.config import package_name
-from src.versions import normalize
+from src.versions import choose, normalize
 
 TIMEOUT = 15
 
@@ -30,6 +30,11 @@ class NuGet:
         if not self.base.startswith(("http://", "https://")):
             raise ValueError("В индексе нет PackageBaseAddress/3.0.0")
         self.base = self.base.rstrip("/")
+
+    def versions(self, name):
+        """Получить список доступных версий одного пакета."""
+        name = quote(package_name(name).lower(), safe="")
+        return json.loads(get(f"{self.base}/{name}/index.json"))["versions"]
 
     def dependencies(self, node):
         """Прочитать зависимости точной версии, сохранив группы платформ."""
@@ -56,3 +61,10 @@ class NuGet:
                  dep.get("version") or "(,)",
                  group.get("targetFramework", "all"))
                 for group in groups for dep in group.findall("dependency")]
+
+    def children(self, node):
+        """Подобрать версии прямых зависимостей для дальнейшего обхода."""
+        return list(dict.fromkeys(
+            (name, choose(self.versions(name), constraint))
+            for name, constraint, _ in self.dependencies(node)
+        ))

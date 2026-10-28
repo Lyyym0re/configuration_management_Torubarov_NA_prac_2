@@ -9,6 +9,8 @@ from unittest.mock import patch
 from src.config import parse
 from src.cli import command
 from src.nuget import NuGet
+from src.versions import choose
+from src.graph import build, read_test
 
 ROOT = Path(__file__).resolve().parents[1]
 OPTIONS = ["--package", "A", "--version", "1.0.0", "--test-mode",
@@ -46,6 +48,25 @@ class AppTests(unittest.TestCase):
         with patch("src.nuget.get", side_effect=[feed, xml]):
             result = NuGet("https://feed.test").dependencies(("a", "1"))
             self.assertEqual(result, [("b", "[2]", "all")])
+
+    def test_version_range(self):
+        """Выбирать минимальную версию с учётом открытой верхней границы."""
+        self.assertEqual(choose(["2.0", "1.5", "1.0"], "[1.1,2)"), "1.5.0")
+
+    def test_recursive_bfs(self):
+        """Получить порядок BFS и не зациклиться на обратной связи."""
+        links = {"A": ["B", "C"], "B": ["D"], "C": ["D"], "D": ["A"]}
+        graph = build("A", links.__getitem__)
+        self.assertEqual(list(graph), ["A", "B", "C", "D"])
+        self.assertEqual(graph["D"], ["A"])
+
+    def test_local_repository(self):
+        """Проверить общий потомок, цикл и одиночный тестовый пакет."""
+        data = read_test(ROOT / "demo/repository.json")
+        for name, count in (("A", 4), ("E", 2), ("G", 1), ("Z", 1)):
+            with self.subTest(name=name):
+                self.assertEqual(len(build((name, "1.0.0"), data.__getitem__)),
+                                 count)
 
 
 if __name__ == "__main__":

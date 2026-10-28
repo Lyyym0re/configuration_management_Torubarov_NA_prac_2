@@ -8,22 +8,29 @@ from xml.etree.ElementTree import ParseError
 
 from src.config import Parser, parse
 from src.nuget import NuGet
+from src.graph import build, read_test, show
 
 ERRORS = (ValueError, OSError, KeyError, TypeError, ParseError,
           subprocess.SubprocessError, RecursionError)
 
 
+def source(args):
+    """Получить корневой узел и функцию чтения его соседей."""
+    name = args.package if args.test_mode else args.package.lower()
+    root = name, args.version
+    if args.test_mode:
+        data = read_test(args.repository)
+        if root not in data:
+            raise ValueError("Нет такого тестового пакета или версии 1.0.0")
+        return root, data.__getitem__, data
+    return root, NuGet(args.repository).children, None
+
+
 def run(arguments):
     """Выполнить основной сценарий текущего этапа."""
     args = parse(arguments)
-    if args.test_mode:
-        raise ValueError("Анализ тестовых графов появится на этапе 3")
-    node = args.package.lower(), args.version
-    dependencies = NuGet(args.repository).dependencies(node)
-    for name, constraint, framework in dependencies:
-        print(f"[{framework}] {name} {constraint}")
-    if not dependencies:
-        print("Прямых зависимостей нет")
+    root, children, _ = source(args)
+    show(build(root, children))
 
 
 def checked(arguments):
