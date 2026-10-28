@@ -50,12 +50,7 @@ def parse(arguments):
     parser.add_argument("-t", "--test-mode", action="store_true")
     parser.add_argument("-o", "--output", default="graph.png")
     parser.add_argument("-a", "--ascii", action="store_true")
-    parser.add_argument("--reverse", action="store_true")
-    parser.add_argument("--root", nargs=2)
     args = parser.parse_args(arguments)
-    if args.root:
-        package_name(args.root[0])
-        args.root[1] = normalize(args.root[1])
     package_name(args.package)
     args.version = normalize(args.version)
     check_repository(args.repository, args.test_mode)

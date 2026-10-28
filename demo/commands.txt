@@ -1,6 +1,5 @@
-analyze --package D --version 1.0.0 --repository demo/repository.json --test-mode --reverse
-analyze --package A --version 1.0.0 --repository demo/repository.json --test-mode --reverse
-analyze --package E --version 1.0.0 --repository demo/repository.json --test-mode --reverse
-analyze --package G --version 1.0.0 --repository demo/repository.json --test-mode --reverse
-analyze --package Z --version 1.0.0 --repository demo/repository.json --test-mode --reverse
+analyze -p A -v 1.0.0 -r demo/repository.json -t -a -o output/A.png
+analyze -p E -v 1.0.0 -r demo/repository.json -t -a -o output/E.png
+analyze -p G -v 1.0.0 -r demo/repository.json -t -a -o output/G.png
+analyze -p Z -v 1.0.0 -r demo/repository.json -t -a -o output/Z.png
 analyze --package X --version 1.0.0 --repository demo/repository.json --test-mode

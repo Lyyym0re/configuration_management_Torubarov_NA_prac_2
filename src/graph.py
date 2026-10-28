@@ -56,24 +56,3 @@ def show(graph):
     for node, children in graph.items():
         targets = ", ".join(f"{name} {version}" for name, version in children)
         print(f"{node[0]} {node[1]} -> {targets or '(нет зависимостей)'}")
-
-
-def reverse(graph, target):
-    """Инвертировать рёбра и повторить прежний рекурсивный BFS."""
-    if target not in graph:
-        raise ValueError("Искомой версии нет в области поиска")
-    parents = {node: [] for node in graph}
-    for node, children in graph.items():
-        for child in children:
-            parents[child].append(node)
-    return build(target, parents.__getitem__)
-
-
-def show_reverse(graph, target):
-    """Вывести предков по BFS, не включая пакет в его собственный список."""
-    print("Обратные зависимости (область: тестовый файл или --root):")
-    dependents = [node for node in graph if node != target]
-    for name, version in dependents:
-        print(name, version)
-    if not dependents:
-        print("Других зависимых пакетов нет")

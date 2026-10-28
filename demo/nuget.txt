@@ -1,0 +1,3 @@
+analyze -p Microsoft.Extensions.DependencyInjection -v 9.0.0 -r https://api.nuget.org/v3/index.json -a -o output/p1.png
+analyze -p Microsoft.Extensions.Options -v 9.0.0 -r https://api.nuget.org/v3/index.json -a -o output/p2.png
+analyze -p Microsoft.Extensions.Logging -v 9.0.0 -r https://api.nuget.org/v3/index.json -a -o output/p3.png
