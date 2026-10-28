@@ -7,7 +7,7 @@ import sys
 from xml.etree.ElementTree import ParseError
 
 from src.config import Parser, parse
-
+from src.nuget import NuGet
 
 ERRORS = (ValueError, OSError, KeyError, TypeError, ParseError,
           subprocess.SubprocessError, RecursionError)
@@ -15,8 +15,15 @@ ERRORS = (ValueError, OSError, KeyError, TypeError, ParseError,
 
 def run(arguments):
     """Выполнить основной сценарий текущего этапа."""
-    for key, value in vars(parse(arguments)).items():
-        print(f"{key} = {value}")
+    args = parse(arguments)
+    if args.test_mode:
+        raise ValueError("Анализ тестовых графов появится на этапе 3")
+    node = args.package.lower(), args.version
+    dependencies = NuGet(args.repository).dependencies(node)
+    for name, constraint, framework in dependencies:
+        print(f"[{framework}] {name} {constraint}")
+    if not dependencies:
+        print("Прямых зависимостей нет")
 
 
 def checked(arguments):

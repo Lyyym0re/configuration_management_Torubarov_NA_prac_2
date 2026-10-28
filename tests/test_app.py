@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 from src.config import parse
 from src.cli import command
-
+from src.nuget import NuGet
 
 ROOT = Path(__file__).resolve().parents[1]
 OPTIONS = ["--package", "A", "--version", "1.0.0", "--test-mode",
@@ -35,6 +35,17 @@ class AppTests(unittest.TestCase):
         with redirect_stdout(io.StringIO()):
             self.assertTrue(command("unknown"))
             self.assertTrue(command("help"))
+
+    def test_manifest(self):
+        """Извлечь прямую зависимость из nuspec без сетевого запроса."""
+        xml = (b"<package><metadata><id>A</id><version>1.0</version>"
+               b'<dependencies><dependency id="B" version="[2]"/>'
+               b"</dependencies></metadata></package>")
+        feed = b'{"resources":[{"@type":"PackageBaseAddress/3.0.0",'
+        feed += b'"@id":"https://feed.test/"}]}'
+        with patch("src.nuget.get", side_effect=[feed, xml]):
+            result = NuGet("https://feed.test").dependencies(("a", "1"))
+            self.assertEqual(result, [("b", "[2]", "all")])
 
 
 if __name__ == "__main__":
