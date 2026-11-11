@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 from src.config import parse
 from src.cli import command
-from src.nuget import NuGet
+from src.nuget import Nuget
 from src.versions import choose
 from src.graph import build, read_test
 from src.graph import reverse
@@ -47,7 +47,7 @@ class AppTests(unittest.TestCase):
         feed = b'{"resources":[{"@type":"PackageBaseAddress/3.0.0",'
         feed += b'"@id":"https://feed.test/"}]}'
         with patch("src.nuget.get", side_effect=[feed, xml]):
-            result = NuGet("https://feed.test").dependencies(("a", "1"))
+            result = Nuget("https://feed.test").dependencies(("a", "1"))
             self.assertEqual(result, [("b", "[2]", "all")])
 
     def test_version_range(self):
