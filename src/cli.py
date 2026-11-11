@@ -7,7 +7,7 @@ import sys
 from xml.etree.ElementTree import ParseError
 
 from src.config import Parser, parse
-from src.nuget import NuGet
+from src.nuget import Nuget
 
 ERRORS = (ValueError, OSError, KeyError, TypeError, ParseError,
           subprocess.SubprocessError, RecursionError)
@@ -19,7 +19,7 @@ def run(arguments):
     if args.test_mode:
         raise ValueError("Анализ тестовых графов появится на этапе 3")
     node = args.package.lower(), args.version
-    dependencies = NuGet(args.repository).dependencies(node)
+    dependencies = Nuget(args.repository).dependencies(node)
     for name, constraint, framework in dependencies:
         print(f"[{framework}] {name} {constraint}")
     if not dependencies:
