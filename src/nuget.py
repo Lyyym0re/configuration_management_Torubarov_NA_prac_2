@@ -4,7 +4,7 @@ from functools import cache
 import json
 from urllib.parse import quote
 from urllib.request import urlopen
-from xml.etree import ElementTree as ET
+from xml.etree import ElementTree as element_tree
 
 from src.config import package_name
 from src.versions import choose, normalize
@@ -19,7 +19,7 @@ def get(url):
         return response.read()
 
 
-class NuGet:
+class Nuget:
     """Получать зависимости без менеджеров пакетов и сторонних библиотек."""
 
     def __init__(self, url):
@@ -42,7 +42,7 @@ class NuGet:
         name = quote(package_name(name).lower(), safe="")
         version = quote(normalize(version), safe="")
         url = f"{self.base}/{name}/{version}/{name}.nuspec"
-        root = ET.fromstring(get(url))
+        root = element_tree.fromstring(get(url))
         for element in root.iter():
             element.tag = element.tag.rsplit("}", 1)[-1]
         metadata = root.find("metadata")

@@ -7,7 +7,7 @@ import sys
 from xml.etree.ElementTree import ParseError
 
 from src.config import Parser, parse
-from src.nuget import NuGet
+from src.nuget import Nuget
 from src.graph import build, read_test, show
 from src.visual import save, tree
 
@@ -24,7 +24,7 @@ def source(args):
         if root not in data:
             raise ValueError("Нет такого тестового пакета или версии 1.0.0")
         return root, data.__getitem__, data
-    return root, NuGet(args.repository).children, None
+    return root, Nuget(args.repository).children, None
 
 
 def run(arguments):
